@@ -7,7 +7,7 @@ let ifStartFromBeginning = false;
 function getAllDeliveries(address) {
     return new Promise((resolve) => {
         allEvents = [];
-        axios.get('https://frontend.poap.tech/deliveries?limit=1000&offset=0').then(res => {
+        axios.get('https://api.poap.xyz/deliveries?limit=1000&offset=0').then(res => {
             let events = [];
             if (lastCheckedDelivery < res.data.deliveries[0].id) {
                 window.localStorage.setItem(address, res.data.deliveries[0].id);
@@ -140,7 +140,7 @@ function displayRaffle(raffle) {
 }
 
 function getMyDeliveries(event, address) {
-    axios.get(`https://anyplace-cors.herokuapp.com/https://api.poap.xyz/delivery-addresses/${event.id}/address/${address}`).then(async (res) => {
+    axios.get(`https://api.poap.xyz/delivery-addresses/${event.id}/address/${address}`).then(async (res) => {
         let isClaimed = res.data.claimed;
         allEvents = allEvents.filter(item => item != event.id);
         $('#checkMsg').html(allEvents.length > 0 ? `<p>${allEvents.length} Deliveries Remaining to Check...</p>` : '');
