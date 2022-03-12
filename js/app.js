@@ -70,7 +70,7 @@ function getAllRaffles(poaps, raffles = [], api = 'https://anyplace-cors.herokua
 function getAllPoaps(address) {
     return new Promise((resolve, reject) => {
         let poapList = [];
-        axios.get(`https://api.poap.xyz/actions/scan/${address.toLowerCase()}`).then(async (res) => {
+        axios.get(`https://anyplace-cors.herokuapp.com/https://api.poap.xyz/actions/scan/${address.toLowerCase()}`).then(async (res) => {
             for (let token of res.data) {
                 poapList.push("" + token.event.id)
             }
