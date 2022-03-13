@@ -7,7 +7,7 @@ let ifStartFromBeginning = false;
 function getAllDeliveries(address) {
     return new Promise((resolve) => {
         allEvents = [];
-        axios.get('https://api.poap.xyz/deliveries?limit=1000&offset=0').then(res => {
+        axios.get('https://frontend.poap.tech/deliveries?limit=1000&offset=0').then(res => {
             let events = [];
             if (lastCheckedDelivery < res.data.deliveries[0].id) {
                 window.localStorage.setItem(address, res.data.deliveries[0].id);
