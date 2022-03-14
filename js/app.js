@@ -152,7 +152,7 @@ function getQueueIdStatus(event, queueId) {
 // }
 
 function getMyDeliveries(event, address) {
-    axios.get(`https://anyplace-cors.herokuapp.com/https://api.poap.xyz/delivery-addresses/${event.id}/address/${address}`).then(async (res) => {
+    axios.get(`https://api.poap.xyz/delivery-addresses/${event.id}/address/${address}`).then(async (res) => {
         if (!hasPoapClaimed) {
             $('#deliveriesHeader').html(`<div class="row mt-5">
                 <div class="col-md-12">
@@ -212,7 +212,7 @@ async function startRaffles(address) {
 }
 function getMyDeliveriesFromAPI(address) {
     return new Promise((resolve) => {
-        axios.get(`https://anyplace-cors.herokuapp.com/https://api.po-ap.com/delivery?address=${address}`).then(res => {
+        axios.get(`https://api.po-ap.com/delivery?address=${address}`).then(res => {
             let deliveries = res.data;
             resolve(deliveries);
         }).catch(err => {
@@ -255,7 +255,7 @@ async function startDeliveries(address) {
 
 function getMyDeliveryInfo(deliveryId) {
     return new Promise((resolve) => {
-        axios.get(`https://anyplace-cors.herokuapp.com/https://api.poap.xyz/delivery/${deliveryId}`).then(res => {
+        axios.get(`https://api.po-ap.com/delivery/${deliveryId}`).then(res => {
             resolve(res.data)
         })
     })
