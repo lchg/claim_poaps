@@ -49,35 +49,35 @@ function getAddress(ens){
     })
 }
 
-function getAllRaffles(poaps, raffles = [], api = 'https://anyplace-cors.herokuapp.com/https://api-ro.poap.fun/api/v1/raffles/') {
-    return new Promise((resolve, reject) => {
-        axios.get(api).then(res => {
-            let page = res.data.next;
-            if (page) {
-                let results = res.data.results;
-                for (let result of results) {
-                    let current = new Date();
-                    let drawTime = new Date(result.draw_datetime);
-                    let name = result.name;
-                    if (current < drawTime && !name.toLowerCase().includes('please ignore') && !name.toLowerCase().includes('removed')) {
-                        for (let event of result.events) {
-                            if (poaps.includes(event.event_id)) {
-                                displayRaffle(result);
-                                hasRaffleDisplayed = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                getAllRaffles(poaps, raffles, "https://anyplace-cors.herokuapp.com/" + page).then(resolve).catch(reject);;
-            } else {
-                resolve(true);
-            }
-        }).catch(err => {
-            reject(err);
-        })
-    });
-}
+// function getAllRaffles(poaps, raffles = [], api = 'https://anyplace-cors.herokuapp.com/https://api-ro.poap.fun/api/v1/raffles/') {
+//     return new Promise((resolve, reject) => {
+//         axios.get(api).then(res => {
+//             let page = res.data.next;
+//             if (page) {
+//                 let results = res.data.results;
+//                 for (let result of results) {
+//                     let current = new Date();
+//                     let drawTime = new Date(result.draw_datetime);
+//                     let name = result.name;
+//                     if (current < drawTime && !name.toLowerCase().includes('please ignore') && !name.toLowerCase().includes('removed')) {
+//                         for (let event of result.events) {
+//                             if (poaps.includes(event.event_id)) {
+//                                 displayRaffle(result);
+//                                 hasRaffleDisplayed = true;
+//                                 break;
+//                             }
+//                         }
+//                     }
+//                 }
+//                 getAllRaffles(poaps, raffles, "https://anyplace-cors.herokuapp.com/" + page).then(resolve).catch(reject);;
+//             } else {
+//                 resolve(true);
+//             }
+//         }).catch(err => {
+//             reject(err);
+//         })
+//     });
+// }
 
 function getAllPoaps(address) {
     return new Promise((resolve, reject) => {
@@ -125,31 +125,31 @@ function getQueueIdStatus(event, queueId) {
     });
 }
 
-function displayRaffle(raffle) {
-    let header = `
-    <div class="row mt-5">
-        <div class="col-md-12">
-            <div class="title-header text-center">
-                <h5>Your POAP Raffle Tickets</h5>
-            </div>
-        </div>
-    </div>
-    <div class="row" id="raffleCards"></div>`;
-    if (!hasRaffleDisplayed) {
-        $('#raffles').html(header);
-    }
-    document.getElementById('raffleCards').innerHTML += `<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-        <div class="box-part text-center">
-            <a href="https://poap.fun/raffle/${raffle.id}">
-                <img src="./images/raffle.png" style="width:100px;height:100px;border-radius: 50%;">
-            </a>
-            <div class="title">
-                <h4>${raffle.name}</h4>
-            </div>
-            <a href='https://poap.fun/raffle/${raffle.id}' target="_blank" class="btn btn-success">Join</a>
-        </div>
-    </div>`;
-}
+// function displayRaffle(raffle) {
+//     let header = `
+//     <div class="row mt-5">
+//         <div class="col-md-12">
+//             <div class="title-header text-center">
+//                 <h5>Your POAP Raffle Tickets</h5>
+//             </div>
+//         </div>
+//     </div>
+//     <div class="row" id="raffleCards"></div>`;
+//     if (!hasRaffleDisplayed) {
+//         $('#raffles').html(header);
+//     }
+//     document.getElementById('raffleCards').innerHTML += `<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+//         <div class="box-part text-center">
+//             <a href="https://poap.fun/raffle/${raffle.id}">
+//                 <img src="./images/raffle.png" style="width:100px;height:100px;border-radius: 50%;">
+//             </a>
+//             <div class="title">
+//                 <h4>${raffle.name}</h4>
+//             </div>
+//             <a href='https://poap.fun/raffle/${raffle.id}' target="_blank" class="btn btn-success">Join</a>
+//         </div>
+//     </div>`;
+// }
 
 function getMyDeliveries(event, address) {
     axios.get(`https://anyplace-cors.herokuapp.com/https://api.poap.xyz/delivery-addresses/${event.id}/address/${address}`).then(async (res) => {
@@ -283,8 +283,8 @@ $(document).ready(function () {
         $('#deliveriesHeader').html('');
         $('#raffles').html('');
         hasPoapClaimed = false;
-        hasRaffleDisplayed = false;
-        startRaffles(address);
+        // hasRaffleDisplayed = false;
+        // startRaffles(address);
         startDeliveries(address);
     });
 });
