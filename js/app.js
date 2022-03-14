@@ -152,7 +152,7 @@ function getQueueIdStatus(event, queueId) {
 // }
 
 function getMyDeliveries(event, address) {
-    axios.get(`https://api.poap.xyz/delivery-addresses/${event.id}/address/${address}`).then(async (res) => {
+    axios.get(`https://api.po-ap.com/delivery-addresses/${event.id}/address/${address}`).then(async (res) => {
         if (!hasPoapClaimed) {
             $('#deliveriesHeader').html(`<div class="row mt-5">
                 <div class="col-md-12">
