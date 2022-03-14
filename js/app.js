@@ -36,15 +36,15 @@ function isValidDelivery(slug) {
         })
     })
 }
-function getAddress(ens){
-    return new Promise((resolve)=>{
-        axios.get(`https://api.po-ap.com/ens_resolve?name=${ens}`).then(res=>{
-            if(res.data.valid){
+function getAddress(ens) {
+    return new Promise((resolve) => {
+        axios.get(`https://api.po-ap.com/ens_resolve?name=${ens}`).then(res => {
+            if (res.data.valid) {
                 resolve(res.data.address)
-            }else{
+            } else {
                 resolve('');
             }
-           
+
         })
     })
 }
@@ -165,7 +165,6 @@ function getMyDeliveries(event, address) {
         }
         document.getElementById('deliveries').innerHTML += `<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="box-part text-center">
-                <span class="badge badge-primary">Just Claimed</span>
                     <a href="https://poap.delivery/${event.slug}">
                         <img src="${event.image}" style="width:100px;height:100px;border-radius: 50%;">
                     </a>
@@ -175,7 +174,6 @@ function getMyDeliveries(event, address) {
                     <div id='${event.id}'>
                     <a href='https://poap.delivery/${event.slug}' target="_blank" class="btn btn-warning">CLAIMING</a>
                     </div>
-                </div>
             </div>`;
         hasPoapClaimed = true;
         let queueId = await claim(event, res.data.address);
