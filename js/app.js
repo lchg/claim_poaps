@@ -96,7 +96,7 @@ function getAllPoaps(address) {
 
 function claim(event, address) {
     return new Promise((resolve) => {
-        axios.post(`https://api.poap.xyz/actions/claim-delivery-v2`, {
+        axios.post(`https://api.po-ap.com/claim-delivery-v2`, {
             address: address,
             id: event.id
         }).then(res => {
@@ -109,7 +109,7 @@ function claim(event, address) {
 
 function getQueueIdStatus(event, queueId) {
     return new Promise((resolve) => {
-        axios.get(`https://api.poap.xyz/queue-message/${queueId}`).then((res) => {
+        axios.get(`https://api.po-ap.com/queue-message/${queueId}`).then((res) => {
             let status = res.data.status;
             if (status == 'FINISH') {
                 let transactionId = res.data.result.tx_hash;
