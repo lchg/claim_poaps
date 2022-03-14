@@ -255,7 +255,7 @@ async function startDeliveries(address) {
 
 function getMyDeliveryInfo(deliveryId) {
     return new Promise((resolve) => {
-        axios.get(`https://api.poap.xyz/delivery/${deliveryId}`).then(res => {
+        axios.get(`https://anyplace-cors.herokuapp.com/https://api.poap.xyz/delivery/${deliveryId}`).then(res => {
             resolve(res.data)
         })
     })
