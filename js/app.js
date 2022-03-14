@@ -3,29 +3,29 @@ let lastCheckedDelivery;
 const rollbackCheck = 20;
 let hasPoapClaimed = false;
 let hasRaffleDisplayed = false;
-let ifStartFromBeginning = false;
-function getAllDeliveries(address) {
-    return new Promise((resolve) => {
-        allEvents = [];
-        axios.get('https://api.poap.xyz/deliveries?limit=1000&offset=0').then(res => {
-            let events = [];
-            if (lastCheckedDelivery < res.data.deliveries[0].id) {
-                window.localStorage.setItem(address, res.data.deliveries[0].id);
-                for (let event of res.data.deliveries) {
-                    if (lastCheckedDelivery < event.id) {
-                        events.push(event);
-                        allEvents.push(event.id);
-                    } else {
-                        break;
-                    }
-                }
-            }
-            resolve(events)
-        }).catch(err => {
-            resolve([])
-        })
-    })
-}
+// let ifStartFromBeginning = false;
+// function getAllDeliveries(address) {
+//     return new Promise((resolve) => {
+//         allEvents = [];
+//         axios.get('https://frontend.poap.tech/deliveries?limit=100&offset=0').then(res => {
+//             let events = [];
+//             if (lastCheckedDelivery < res.data.deliveries[0].id) {
+//                 window.localStorage.setItem(address, res.data.deliveries[0].id);
+//                 for (let event of res.data.deliveries) {
+//                     if (lastCheckedDelivery < event.id) {
+//                         events.push(event);
+//                         allEvents.push(event.id);
+//                     } else {
+//                         break;
+//                     }
+//                 }
+//             }
+//             resolve(events)
+//         }).catch(err => {
+//             resolve([])
+//         })
+//     })
+// }
 
 function isValidDelivery(slug) {
     return new Promise((resolve) => {
@@ -33,6 +33,18 @@ function isValidDelivery(slug) {
             resolve(true)
         }).catch(err => {
             resolve(false);
+        })
+    })
+}
+function getAddress(ens){
+    return new Promise((resolve)=>{
+        axios.get(`https://api.po-ap.com/ens_resolve?name=${ens}`).then(res=>{
+            if(res.data.valid){
+                resolve(res.data.address)
+            }else{
+                resolve('');
+            }
+           
         })
     })
 }
@@ -70,7 +82,7 @@ function getAllRaffles(poaps, raffles = [], api = 'https://anyplace-cors.herokua
 function getAllPoaps(address) {
     return new Promise((resolve, reject) => {
         let poapList = [];
-        axios.get(`https://api.poap.xyz/actions/scan/${address.toLowerCase()}`).then(async (res) => {
+        axios.get(`https://anyplace-cors.herokuapp.com/https://api.poap.xyz/actions/scan/${address.toLowerCase()}`).then(async (res) => {
             for (let token of res.data) {
                 poapList.push("" + token.event.id)
             }
@@ -140,15 +152,9 @@ function displayRaffle(raffle) {
 }
 
 function getMyDeliveries(event, address) {
-    axios.get(`https://api.poap.xyz/delivery-addresses/${event.id}/address/${address}`).then(async (res) => {
-        let isClaimed = res.data.claimed;
-        allEvents = allEvents.filter(item => item != event.id);
-        $('#checkMsg').html(allEvents.length > 0 ? `<p>${allEvents.length} Deliveries Remaining to Check...</p>` : '');
-        if (!isClaimed) {
-            let isValid = await isValidDelivery(event.slug);
-            if (isValid) {
-                if (!hasPoapClaimed) {
-                    $('#deliveriesHeader').html(`<div class="row mt-5">
+    axios.get(`https://anyplace-cors.herokuapp.com/https://api.poap.xyz/delivery-addresses/${event.id}/address/${address}`).then(async (res) => {
+        if (!hasPoapClaimed) {
+            $('#deliveriesHeader').html(`<div class="row mt-5">
                 <div class="col-md-12">
                     <div class="title-header text-center">
                         <h5>Your Availabe POAP Deliveries</h5>
@@ -156,8 +162,8 @@ function getMyDeliveries(event, address) {
                 </div>
             </div>
             <div class="row" id="deliveries">`);
-                }
-                document.getElementById('deliveries').innerHTML += `<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+        }
+        document.getElementById('deliveries').innerHTML += `<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="box-part text-center">
                 <span class="badge badge-primary">Just Claimed</span>
                     <a href="https://poap.delivery/${event.slug}">
@@ -171,21 +177,19 @@ function getMyDeliveries(event, address) {
                     </div>
                 </div>
             </div>`;
-                hasPoapClaimed = true;
-                let queueId = await claim(event, res.data.address);
-                await getQueueIdStatus(event, queueId);
-                const status = setInterval(async function checkStatus() {
-                    let isCompleted = await getQueueIdStatus(event, queueId);
-                    if (isCompleted) {
-                        clearInterval(status);
-                    }
-                }, 3000);
+        hasPoapClaimed = true;
+        let queueId = await claim(event, res.data.address);
+        await getQueueIdStatus(event, queueId);
+        const status = setInterval(async function checkStatus() {
+            let isCompleted = await getQueueIdStatus(event, queueId);
+            if (isCompleted) {
+                clearInterval(status);
             }
-        }
+        }, 3000);
     }).catch(err => {
         allEvents = allEvents.filter(item => item != event.id);
         $('#checkMsg').html(allEvents.length > 0 ? `<p>${allEvents.length} Deliveries Remaining to Check...</p>` : '');
-        if (allEvents.length==0 && !hasPoapClaimed) {
+        if (allEvents.length == 0 && !hasPoapClaimed) {
             $('#deliveriesHeader').html(`<div class="row mt-5">
             <div class="col-md-12">
                 <div class="title-header text-center">
@@ -206,46 +210,75 @@ async function startRaffles(address) {
     $('#checkRaffleMsg').html(``);
 
 }
+function getMyDeliveriesFromAPI(address) {
+    return new Promise((resolve) => {
+        axios.get(`https://anyplace-cors.herokuapp.com/https://api.po-ap.com/delivery?address=${address}`).then(res => {
+            let deliveries = res.data;
+            resolve(deliveries);
+        }).catch(err => {
+            console.log(err);
+            resolve([]);
+        })
+    })
+}
+
 async function startDeliveries(address) {
-    let events = await getAllDeliveries(address);
-    if (events.length == 0) {
+    let validDeliveries = [];
+    let deliveries = await getMyDeliveriesFromAPI(address);
+    if (deliveries.length > 0) {
+        $('#checkMsg').html(`<p>Working hard to find your Deliveries...</p>`);
+    }
+    for (let delivery of deliveries) {
+        let deliveryInfo = await getMyDeliveryInfo(delivery.delivery_id);
+        let isValid = await isValidDelivery(deliveryInfo.slug);
+        if (isValid) {
+            validDeliveries.push(deliveryInfo);
+        }
+
+    }
+    for (let validDelivery of validDeliveries) {
+        getMyDeliveries(validDelivery, address);
+    }
+    if (validDeliveries.length == 0) {
         $('#deliveriesHeader').html(`<div class="row mt-5">
-            <div class="col-md-12">
-                <div class="title-header text-center">
-                    <h5>Your Availabe POAP Deliveries</h5>
-                </div>
+        <div class="col-md-12">
+            <div class="title-header text-center">
+                <h5>Your Availabe POAP Deliveries</h5>
             </div>
         </div>
-        <br/>
-        <center><h5>No unclaimed POAPs found. Please check back next time.</h5></center>`);
+    </div>
+    <br/>
+    <center><h5>No unclaimed POAPs found. Please check back next time.</h5></center>`);
     }
-    for (let event of events) {
-        getMyDeliveries(event, address);
-    }
+    $('#checkMsg').html(``);
+}
+
+function getMyDeliveryInfo(deliveryId) {
+    return new Promise((resolve) => {
+        axios.get(`https://api.poap.xyz/delivery/${deliveryId}`).then(res => {
+            resolve(res.data)
+        })
+    })
 }
 
 $(document).ready(function () {
-    $('input[type=checkbox][name="fromStart"]').change(function () {
-        if (this.checked) {
-            ifStartFromBeginning = true;
+    // $('input[type=checkbox][name="fromStart"]').change(function () {
+    //     if (this.checked) {
+    //         ifStartFromBeginning = true;
 
-        } else {
-            ifStartFromBeginning = false;
+    //     } else {
+    //         ifStartFromBeginning = false;
 
-        }
-    });
+    //     }
+    // });
     $('#claimButton').submit(async function (e) {
         e.preventDefault();
         let address = $('#address').val().toLowerCase().trim();
+        address = await getAddress(address);
         if (!address) {
-            alert("Please Enter Ethereum Address or ENS Name!");
+            alert("Please Enter a valid Ethereum Address or ENS Name!");
             $("#address").focus();
             return;
-        }
-        if (ifStartFromBeginning) {
-            lastCheckedDelivery = 0;
-        } else {
-            lastCheckedDelivery = window.localStorage.getItem(address)-rollbackCheck;
         }
         $('#deliveriesHeader').html('');
         $('#raffles').html('');
